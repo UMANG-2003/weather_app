@@ -1,24 +1,25 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import dotenv from "dotenv";
-dotenv.config();
 
 function Weather() {
   const [city, setCity] = useState("");
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const searchCity = async (cityInput) => {
     setLoading(true);
+    setError("");
     setCity(cityInput);
 
     const options = {
       method: "GET",
       url: `https://open-weather13.p.rapidapi.com/city/${cityInput}/EN`,
       headers: {
-      "x-rapidapi-key": process.env.REACT_APP_RAPIDAPI_KEY,
-      "x-rapidapi-host": "open-weather13.p.rapidapi.com",
+        // process.env.REACT_APP_RAPIDAPI_KEY
+        "x-rapidapi-key": "9d9680b786mshb2fe71d95d8f13cp1796f6jsn9d0905217bfb",
+        "x-rapidapi-host": "open-weather13.p.rapidapi.com",
       },
     };
 
@@ -27,6 +28,7 @@ function Weather() {
       setData(response.data);
       console.log(response.data);
     } catch (error) {
+      setError("City not found or failed to fetch weather data.");
       console.error(error);
     } finally {
       setLoading(false);
@@ -46,7 +48,7 @@ function Weather() {
           e.preventDefault();
           const cityInput = e.target.elements.city.value;
           searchCity(cityInput);
-          document.querySelector('input[name="city"]').value = "";
+          e.target.reset();
         }}
       >
         <div className="border-2 border-gray-300 rounded-3xl">
@@ -62,6 +64,12 @@ function Weather() {
           </button>
         </div>
       </form>
+
+      {error && (
+        <p className="text-center text-red-500 font-semibold mt-[-10px]">
+          {error}
+        </p>
+      )}
 
       <div className="bg-white h-[78vh] w-[90vw] mx-auto my-10 rounded-3xl text-black p-4 relative overflow-hidden md:w-[25%]">
         {loading && (
